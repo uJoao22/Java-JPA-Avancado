@@ -35,5 +35,14 @@ public class PedidoDao {
 				+ " GROUP BY produto.nome ORDER BY item.quantidade DESC";
 		return em.createQuery(jpql, RelatorioDeVendasVo.class).getResultList();
 	}
+
+	public Pedido buscarPedidoComCliente(Long id) {
+		//Criando a query planejada, fazendo a consulta já carregando o atributo lazy que vou precisar em seguida
+		//Usando o JOIN FECTH atributo a ser carregado
+		return em.createQuery("SELECT p FROM Pedido p JOIN FETCH p.cliente WHERE p.id = :id", Pedido.class)
+				.setParameter("id", id).getSingleResult();
+	}
+	
+	
 	
 }
