@@ -45,8 +45,9 @@ public class ProdutoDao {
 	}
 	
 	public List<Produto> buscarPorNomeDaCategoria(String nome) {
-		String jpql = "SELECT p FROM Produto p WHERE p.categoria.nome = :nome";
-		return em.createQuery(jpql, Produto.class)
+		//Utilizando o named Query, ao invés do método createQuery, deve ser usado o método 
+		//createNamedQuery(apelido da query dado na class, o que será retornado)
+		return em.createNamedQuery("Produto.produtosPorCategoria", Produto.class)
 				.setParameter("nome", nome)
 				.getResultList();
 	}

@@ -8,10 +8,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "produtos")
+
+//Utilizando Named Query, é necessario dar um name, para a query, um apelidom e em seguida passar a query, é boa pratica, ao colocar
+//um apelido para a query colocar antes o nome da entidade a que ela se refere
+@NamedQuery(name = "Produto.produtosPorCategoria", query = "SELECT p FROM Produto p WHERE p.categoria.nome = :nome")
 public class Produto {
 
 	@Id
