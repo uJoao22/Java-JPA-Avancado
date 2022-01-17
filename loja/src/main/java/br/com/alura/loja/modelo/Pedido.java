@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,8 @@ public class Pedido {
 	@Column(name="valor_total")
 	private BigDecimal valorTotal = BigDecimal.ZERO;
 	
-	@ManyToOne
+	//Definindo o carregamento como Lazy, para que só seja carregado, caso for chamado
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Cliente cliente;
 
 	//Informando para a JPA que este é um relcionamento bidirecional e infomando qual o outro lado
@@ -78,6 +80,14 @@ public class Pedido {
 
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
+	}
+
+	public List<ItemPedido> getItens() {
+		return itens;
+	}
+
+	public void setItens(List<ItemPedido> itens) {
+		this.itens = itens;
 	}
 	
 }
