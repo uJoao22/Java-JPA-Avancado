@@ -76,4 +76,8 @@ public class ItemPedido {
 		this.produto = produto;
 	}
 
+	public BigDecimal getValor() {
+		//Como precoUnitario é um BigDecimal, ele possui o método multiply para multiplicar com outro BigDecimal
+		return precoUnitario.multiply(new BigDecimal(quantidade));
+	}
 }
