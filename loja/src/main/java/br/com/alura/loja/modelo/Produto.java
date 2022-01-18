@@ -8,6 +8,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -18,6 +20,10 @@ import javax.persistence.Table;
 //Utilizando Named Query, é necessario dar um name, para a query, um apelidom e em seguida passar a query, é boa pratica, ao colocar
 //um apelido para a query colocar antes o nome da entidade a que ela se refere
 @NamedQuery(name = "Produto.produtosPorCategoria", query = "SELECT p FROM Produto p WHERE p.categoria.nome = :nome")
+//Dizendo para a JPA que vai ser criado um "tabelão" com todos os atributos das classes filhas
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//Dizendo para a JPA que será criado varias tabelas sendo relacionadas por chaves estrangeiras
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Produto {
 
 	@Id
