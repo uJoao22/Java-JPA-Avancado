@@ -6,6 +6,10 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import br.com.alura.loja.modelo.Produto;
 
@@ -61,6 +65,7 @@ public class ProdutoDao {
 				.getSingleResult();
 	}
 
+	//Usando o método tradicional, com o jpql e a "gambiarra" do where 1=1
 	public List<Produto> buscarPorParametros(String nome, BigDecimal preco, LocalDate dataCadastro){
 		//Fazendo a "gambiarra" com o WHERE para deixar os parametros dinamicos
 		String jpql = "SELECT p FROM Produto p WHERE 1=1";
@@ -84,5 +89,43 @@ public class ProdutoDao {
 			query.setParameter("dataCadastro", dataCadastro);
 		
 		return query.getResultList();
+	}
+	
+	//Usando o método adicionado na JPA 2.0, o Criteria, sem usar o jpql
+	public List<Produto> buscarPorParametrosComCriteria(String nome, BigDecimal preco, LocalDate dataCadastro){
+		
+		//A partir do Entity Manager chamando o método getCriteriaBuilder, que vai criar o objeto criteria e passar para um 
+		//objeto do tipo CriteriaBuilder
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		
+		//builder, crie uma query pra mim, uma criteria query que devolve um objeto do tipo Produto para um objeto do tipo
+		//CriteriaQuery<Produto>
+		CriteriaQuery<Produto> query = builder.createQuery(Produto.class);
+		
+		//Informando para a query que ela irá fazer a consulta na entidade Produto, definindo o som FROM da query
+		//Se o select for igual ao from, for selecionar todos atributos da entidade definida no from, não é preciso informar
+		//o select, ele entende que é o mesmo do from, caso precisase, seria assim:
+		//query.select("query do select");
+		//O from devolve um objeto do tipo Root<Produto>
+		Root<Produto> from = query.from(Produto.class);
+
+		//Criando um builder.and() que cria os and's na condição do where e devolve um objeto do tipo Predicate
+		Predicate filtros = builder.and();
+		
+		if(nome != null && !nome.trim().isEmpty())
+			//Builder, crie um novo and, usando o and atual, e executando uma condição apartir do builder, que seria a condição
+			//de igualdade, se o atributo nome for igual ao nome recebido por parametro e passe esse resultado para a variavel
+			//filtros, reatribuindo ela
+			filtros = builder.and(filtros, builder.equal(from.get("nome"), nome));
+		if(preco != null)
+			filtros = builder.and(filtros, builder.equal(from.get("preco"), preco));
+		if(dataCadastro != null)
+			filtros = builder.and(filtros, builder.equal(from.get("dataCadastro"), dataCadastro));
+		
+		//Pegando a query e dizendo para ele que os filtros do and fazem parte do Where
+		query.where(filtros);
+		
+		//Criando uma query baseada no objeto Criteria Query e execute retornando uma lista de resultados
+		return em.createQuery(query).getResultList();
 	}
 }
