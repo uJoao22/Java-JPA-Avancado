@@ -24,7 +24,7 @@ public class PerformanceConsultas {
 		
 		em.close();
 		
-		System.out.println(pedido.getCliente().getNome());
+		System.out.println(pedido.getCliente().getDadosPessoais().getNome());
 	}
 
 	private static void popularBancoDeDados() {
